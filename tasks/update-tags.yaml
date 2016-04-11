@@ -1,0 +1,13 @@
+---
+platform: linux
+image: docker:///helioncf/git-notary
+inputs:
+- name: src
+- name: ci
+outputs:
+- name: versioned
+run:
+  path: ci/scripts/update-tags
+  args:
+  - src
+  - versioned/src
