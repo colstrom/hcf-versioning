@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -o errexit -o nounset -o xtrace
+
+IN=${PWD}/${1}
+OUT=${PWD}/${2}
+
+cd ${IN}
+
+git-notary fetch
+git-notary notes | git-notary versions | git-notary tags
+git-notary notes | git-notary versions | git-notary tags --apply
+
+cp -a ${IN} ${OUT}
