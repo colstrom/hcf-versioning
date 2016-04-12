@@ -1,0 +1,70 @@
+---
+resources:
+- name: hcf-versioning
+  type: git
+  source:
+    uri: {{git-hcf-versioning-uri}}
+- name: hcf-configgin
+  type: git
+  source:
+    uri: {{git-hcf-configgin-uri}}
+    branch: develop
+- name: hcf
+  type: git
+  source:
+    uri: {{git-hcf-uri}}
+    branch: develop
+- name: fissile
+  type: git
+  source:
+    uri: {{git-fissile-uri}}
+    branch: develop
+jobs:
+- name: stamp-hcf-configgin
+  plan:
+  - get: src
+    resource: hcf-configgin
+    trigger: true
+    params:
+      submodules: none
+  - get: ci
+    resource: hcf-versioning
+    trigger: true
+  - task: update-tags
+    file: ci/tasks/update-tags.yaml
+  - put: hcf-configgin
+    params:
+      repository: versioned/src
+      only_tag: true
+- name: stamp-hcf
+  plan:
+  - get: src
+    resource: hcf
+    trigger: true
+    params:
+      submodules: none
+  - get: ci
+    resource: hcf-versioning
+    trigger: true
+  - task: update-tags
+    file: ci/tasks/update-tags.yaml
+  - put: hcf
+    params:
+      repository: versioned/src
+      only_tag: true
+- name: stamp-fissile
+  plan:
+  - get: src
+    resource: fissile
+    trigger: true
+    params:
+      submodules: none
+  - get: ci
+    trigger: true
+    resource: hcf-versioning
+  - task: update-tags
+    file: ci/tasks/update-tags.yaml
+  - put: fissile
+    params:
+      repository: versioned/src
+      only_tag: true
